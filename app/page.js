@@ -2,12 +2,15 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Appbar from "./components/AppBar";
-import { getComment } from "./action";
-
+import { getChannelDetail, getComment, getVideoDetail } from "./action";
+import Loading from "./components/Loading";
 export default function Home() {
   const { data: session } = useSession();
   const [videoUrl, setVideoUrl] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [comments, setComments] = useState([]);
+  const [channel, setChannel] = useState({});
+  const [video, setVideo] = useState({});
   const filterText = (inputText) => {
     // Remove emojis
     const noEmojis = inputText.replace(/[\u{1F600}-\u{1F6FF}]/gu, "");
@@ -23,14 +26,21 @@ export default function Home() {
     }
     const videoId = videoUrl.split("v=")[1].split("&")[0];
     if (session) {
+      setLoading(true);
       const data = await getComment(videoId);
+      const channelId = data[0].channelId;
+      const videoData = await getVideoDetail(videoId);
+      const channelData = await getChannelDetail(channelId);
+      console.log(videoData);
+      console.log(channelData);
       const comment = data.map(
         (item) => item.topLevelComment.snippet.textDisplay
       );
       let filtered_comments = comment.map((item) => filterText(item));
       filtered_comments = filtered_comments.filter((item) => item !== "");
       setComments(filtered_comments);
-      console.log(filtered_comments);
+      setVideoUrl("");
+      setLoading(false);
     } else {
       alert("Please login first");
     }
@@ -57,14 +67,22 @@ export default function Home() {
               placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
               value={videoUrl}
             />
-
-            <button
-              className="m-4 p-2 rounded-lg border-2 border-black"
-              type="submit"
-            >
-              Let's go
-            </button>
+            {isLoading ? (
+              <button className="m-4 p-2 rounded-lg border-2 border-black">
+                <Loading />
+              </button>
+            ) : (
+              <button
+                className="m-4 p-2 rounded-lg border-2 border-black"
+                type="submit"
+              >
+                Let's go
+              </button>
+            )}
           </form>
+        </div>
+        <div className="min-h-screen col-span-2 bg-gradient-to-br from-main-pink">
+          <div className="col-span-2"></div>
         </div>
       </div>
     </main>
