@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "fastapi-dev": "python -m uvicorn app.fastapi.index:app --reload",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
