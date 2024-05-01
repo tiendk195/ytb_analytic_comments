@@ -83,3 +83,7 @@ async def analyze(comment: Comment):
         properties.sort(key=lambda x: x["score"], reverse=True)
         emotion[1] = properties[:5]
     return {"result": result, "comment_with_emotion": comment_with_emotion}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5000)
