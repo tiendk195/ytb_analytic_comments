@@ -4,6 +4,8 @@ import { useState } from "react";
 import Appbar from "./components/AppBar";
 import { getChannelDetail, getComment, getVideoDetail } from "./action";
 import Loading from "./components/Loading";
+import { ChannelHeader } from "./components/ChannelHeader";
+import { VideoHeader } from "./components/VideoHeader";
 export default function Home() {
   const { data: session } = useSession();
   const [videoUrl, setVideoUrl] = useState("");
@@ -31,8 +33,10 @@ export default function Home() {
       const channelId = data[0].channelId;
       const videoData = await getVideoDetail(videoId);
       const channelData = await getChannelDetail(channelId);
-      console.log(videoData);
-      console.log(channelData);
+      // console.log(videoData);
+      // console.log(channelData);
+      setVideo(videoData);
+      setChannel(channelData);
       const comment = data.map(
         (item) => item.topLevelComment.snippet.textDisplay
       );
@@ -51,7 +55,7 @@ export default function Home() {
       <Appbar />
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-main-grey min-h-screen">
-          <p className="m-4 text-[4rem] font-bold font-mono">
+          <p className="m-4 text-[3.2rem] font-bold font-mono">
             Youtube Analytic Comments
           </p>
           <p className="ml-4 text-[1.5rem] font-normal font-mono">
@@ -82,7 +86,12 @@ export default function Home() {
           </form>
         </div>
         <div className="min-h-screen col-span-2 bg-gradient-to-br from-main-pink">
-          <div className="col-span-2"></div>
+          <div className="grid grid-cols-3 border-2 border-black mt-16 ml-12 mr-24 rounded-md p-4 bg-white/39 backdrop-blur-md">
+            <div className="col-span-2">
+              <ChannelHeader channel={channel} />
+              <VideoHeader video={video} />
+            </div>
+          </div>
         </div>
       </div>
     </main>
